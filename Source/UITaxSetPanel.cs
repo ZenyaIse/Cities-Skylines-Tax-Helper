@@ -38,9 +38,9 @@ namespace TaxHelperMod
         //}
         //Debug.Log(sb.ToString());
 
-        UIButton rememberBtn;
-        UIButton applyBtn;
-        private int[] taxValues = new int[6] { 9, 9, 9, 9, 9, 9 };
+        private UIButton rememberBtn;
+        private UIButton applyBtn;
+        public int TaxValuesStorageIndex = 0;
 
         public override void Awake()
         {
@@ -75,12 +75,6 @@ namespace TaxHelperMod
             rememberBtn.eventClick += RememberBtn_eventClick;
         }
 
-        public void SetTaxValues(int[] values)
-        {
-            taxValues = values;
-            updateApplyBtnText();
-        }
-
         private void RememberBtn_eventClick(UIComponent component, UIMouseEventParameter eventParam)
         {
             UIComponent taxesItemContainer = ToolsModifierControl.economyPanel.component.Find("TaxesItemContainer");
@@ -88,7 +82,7 @@ namespace TaxHelperMod
             {
                 UIComponent taxesItem = taxesItemContainer.components[i];
                 UISlider slider = taxesItem.Find<UISlider>("Slider");
-                taxValues[i] = (int)slider.value;
+                SavedTaxValues.taxValues[TaxValuesStorageIndex][i] = (int)slider.value;
             }
 
             updateApplyBtnText();
@@ -103,7 +97,7 @@ namespace TaxHelperMod
                 if (taxesItem.isEnabled)
                 {
                     UISlider slider = taxesItem.Find<UISlider>("Slider");
-                    slider.value = taxValues[i];
+                    slider.value = SavedTaxValues.taxValues[TaxValuesStorageIndex][i];
                 }
             }
         }
@@ -112,8 +106,43 @@ namespace TaxHelperMod
         {
             if (applyBtn != null)
             {
-                applyBtn.text = string.Format("{0}  {1}\n{2}  {3}\n{4}  {5}", taxValues[0], taxValues[1], taxValues[2], taxValues[3], taxValues[4], taxValues[5]);
+                int[] t = SavedTaxValues.taxValues[TaxValuesStorageIndex];
+                applyBtn.text = string.Format("{0}  {1}\n{2}  {3}\n{4}  {5}", t[0], t[1], t[2], t[3], t[4], t[5]);
             }
         }
+
+        #region Static
+
+        private static bool taxControlsAlreadyAdded = false;
+
+        public static void AddTaxControls()
+        {
+            if (taxControlsAlreadyAdded)
+            {
+                return;
+            }
+            else
+            {
+                taxControlsAlreadyAdded = true;
+
+                EconomyPanel ep = ToolsModifierControl.economyPanel;
+                UITabContainer economyContainer = ep.component.Find<UITabContainer>("EconomyContainer");
+                UIPanel taxesPanel = economyContainer.Find<UIPanel>("Taxes");
+
+                UITaxSetPanel taxSetPanel1 = taxesPanel.AddUIComponent<UITaxSetPanel>();
+                taxSetPanel1.position = new Vector3(10, -40);
+                taxSetPanel1.TaxValuesStorageIndex = 0;
+
+                UITaxSetPanel taxSetPanel2 = taxesPanel.AddUIComponent<UITaxSetPanel>();
+                taxSetPanel2.position = new Vector3(10, -140);
+                taxSetPanel2.TaxValuesStorageIndex = 1;
+
+                UITaxSetPanel taxSetPanel3 = taxesPanel.AddUIComponent<UITaxSetPanel>();
+                taxSetPanel3.position = new Vector3(10, -240);
+                taxSetPanel3.TaxValuesStorageIndex = 2;
+            }
+        }
+
+        #endregion
     }
 }
