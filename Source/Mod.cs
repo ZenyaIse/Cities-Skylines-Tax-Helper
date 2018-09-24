@@ -11,7 +11,7 @@ namespace TaxHelperMod
 
         public string Description
         {
-            get { return "Taxes helper mod."; }
+            get { return "Save and restore tax values."; }
         }
 
 
