@@ -26,9 +26,10 @@ namespace TaxHelperMod
         //Tabstrip(ColossalFramework.UI.UITabstrip)
         //TabContainer(ColossalFramework.UI.UITabContainer)
 
+        public bool TaxMultiplierOff = false;
         private bool taxMultiplierLabelAlreadyAdded = false;
         private int counter = 0;
-        UILabel taxMultiplierLabel;
+        private UILabel taxMultiplierLabel;
 
         public void AddTaxMultiplierLabel()
         {
