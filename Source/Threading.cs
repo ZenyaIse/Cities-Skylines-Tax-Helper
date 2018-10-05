@@ -1,5 +1,4 @@
 ﻿using ICities;
-using ColossalFramework;
 
 namespace TaxHelperMod
 {
@@ -7,7 +6,7 @@ namespace TaxHelperMod
     {
         public override void OnAfterSimulationFrame()
         {
-            Singleton<TaxMultiplierManager>.instance.OnAfterSimulationFrame();
+            TaxMultiplierManager.OnAfterSimulationFrame();
         }
     }
 }

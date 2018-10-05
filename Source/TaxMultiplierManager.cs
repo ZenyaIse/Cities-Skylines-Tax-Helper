@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace TaxHelperMod
 {
-    public class TaxMultiplierManager : Singleton<TaxMultiplierManager>
+    public static class TaxMultiplierManager
     {
         //EconomyPanel ep = ToolsModifierControl.economyPanel;
         //Title(ColossalFramework.UI.UILabel)
@@ -26,46 +26,45 @@ namespace TaxHelperMod
         //Tabstrip(ColossalFramework.UI.UITabstrip)
         //TabContainer(ColossalFramework.UI.UITabContainer)
 
-        public bool TaxMultiplierOff = false;
-        private bool taxMultiplierLabelAlreadyAdded = false;
-        private int counter = 0;
-        private UILabel taxMultiplierLabel;
+        public static bool TaxMultiplierOff = false;
+        private static int counter = 0;
+        private const string taxMultiplierLabelName = "taxMultiplierLabel";
 
-        public void AddTaxMultiplierLabel()
+        public static void AddTaxMultiplierLabel()
         {
-            if (taxMultiplierLabelAlreadyAdded)
+            if (findTaxMultiplierLabel() == null)
             {
-                return;
-            }
-            else
-            {
-                taxMultiplierLabelAlreadyAdded = true;
-
-                EconomyPanel ep = ToolsModifierControl.economyPanel;
-                UIComponent incomesExpensesPanel = ep.component.Find("IncomesExpensesPanel");
-                UISlicedSprite titleBar = (UISlicedSprite)incomesExpensesPanel.Find("TitleBar");
-
-                taxMultiplierLabel = titleBar.AddUIComponent<UILabel>();
-                taxMultiplierLabel.position = new Vector3(titleBar.width - 200, -6);
-
-                ep.component.eventVisibilityChanged += delegate (UIComponent component, bool value)
+                UITabContainer economyContainer = ToolsModifierControl.economyPanel.component.Find<UITabContainer>("EconomyContainer");
+                if (economyContainer != null)
                 {
-                    if (value)
+                    UIPanel taxesPanel = economyContainer.Find<UIPanel>("Taxes");
+                    if (taxesPanel != null)
                     {
-                        updateTaxMultiplierLabel();
+                        UILabel taxMultiplierLabel = taxesPanel.AddUIComponent<UILabel>();
+                        taxMultiplierLabel.name = taxMultiplierLabelName;
+                        taxMultiplierLabel.position = new Vector3(10, -taxesPanel.height + 60);
+
+                        taxesPanel.eventVisibilityChanged += delegate (UIComponent component, bool value)
+                        {
+                            if (value)
+                            {
+                                counter = 100;
+                                updateTaxMultiplierLabel();
+                            }
+                        };
                     }
-                };
+                }
             }
         }
 
-        private float getTaxMultiplier()
+        private static float getTaxMultiplier()
         {
             EconomyManager em = Singleton<EconomyManager>.instance;
             FieldInfo field = em.GetType().GetField("m_taxMultiplier", BindingFlags.NonPublic | BindingFlags.Instance);
             return ((int)field.GetValue(em)) * 0.0001f;
         }
 
-        public void OnAfterSimulationFrame()
+        public static void OnAfterSimulationFrame()
         {
             if (!ToolsModifierControl.economyPanel.component.isVisible) return;
 
@@ -76,12 +75,36 @@ namespace TaxHelperMod
             updateTaxMultiplierLabel();
         }
 
-        private void updateTaxMultiplierLabel()
+        private static void updateTaxMultiplierLabel()
         {
-            if (taxMultiplierLabel != null)
+            UITabContainer economyContainer = ToolsModifierControl.economyPanel.component.Find<UITabContainer>("EconomyContainer");
+            if (economyContainer != null)
             {
-                taxMultiplierLabel.text = string.Format("Tax multiplier: {0:0.000}", getTaxMultiplier());
+                UIPanel taxesPanel = economyContainer.Find<UIPanel>("Taxes");
+                if (taxesPanel != null && taxesPanel.isVisible)
+                {
+                    UILabel taxMultiplierLabel = taxesPanel.Find<UILabel>(taxMultiplierLabelName);
+                    if (taxMultiplierLabel != null)
+                    {
+                        taxMultiplierLabel.text = string.Format("Tax multiplier: {0:0.000}", getTaxMultiplier());
+                    }
+                }
             }
+        }
+
+        private static UILabel findTaxMultiplierLabel()
+        {
+            UITabContainer economyContainer = ToolsModifierControl.economyPanel.component.Find<UITabContainer>("EconomyContainer");
+            if (economyContainer != null)
+            {
+                UIPanel taxesPanel = economyContainer.Find<UIPanel>("Taxes");
+                if (taxesPanel != null)
+                {
+                    return taxesPanel.Find<UILabel>(taxMultiplierLabelName);
+                }
+            }
+
+            return null;
         }
     }
 }

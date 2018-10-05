@@ -1,5 +1,4 @@
 ﻿using ColossalFramework.IO;
-using ColossalFramework;
 
 namespace TaxHelperMod
 {
@@ -9,7 +8,7 @@ namespace TaxHelperMod
         {
             public void Serialize(DataSerializer s)
             {
-                s.WriteBool(Singleton<TaxMultiplierManager>.instance.TaxMultiplierOff);
+                s.WriteBool(TaxMultiplierManager.TaxMultiplierOff);
 
                 for (int i = 0; i < taxValues.Length; i++)
                 {
@@ -19,7 +18,7 @@ namespace TaxHelperMod
 
             public void Deserialize(DataSerializer s)
             {
-                Singleton<TaxMultiplierManager>.instance.TaxMultiplierOff = s.ReadBool();
+                TaxMultiplierManager.TaxMultiplierOff = s.ReadBool();
 
                 for (int i = 0; i < taxValues.Length; i++)
                 {

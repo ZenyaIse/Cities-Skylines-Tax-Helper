@@ -113,34 +113,48 @@ namespace TaxHelperMod
 
         #region Static
 
-        private static bool taxControlsAlreadyAdded = false;
-
         public static void AddTaxControls()
         {
-            if (taxControlsAlreadyAdded)
+            if (isTaxControlsNotCreated())
             {
-                return;
-            }
-            else
-            {
-                taxControlsAlreadyAdded = true;
+                UITabContainer economyContainer = ToolsModifierControl.economyPanel.component.Find<UITabContainer>("EconomyContainer");
+                if (economyContainer != null)
+                {
+                    UIPanel taxesPanel = economyContainer.Find<UIPanel>("Taxes");
+                    if (taxesPanel != null)
+                    {
+                        UITaxSetPanel taxSetPanel1 = taxesPanel.AddUIComponent<UITaxSetPanel>();
+                        taxSetPanel1.name = "taxSetPanel1";
+                        taxSetPanel1.position = new Vector3(10, -40);
+                        taxSetPanel1.TaxValuesStorageIndex = 0;
 
-                EconomyPanel ep = ToolsModifierControl.economyPanel;
-                UITabContainer economyContainer = ep.component.Find<UITabContainer>("EconomyContainer");
+                        UITaxSetPanel taxSetPanel2 = taxesPanel.AddUIComponent<UITaxSetPanel>();
+                        taxSetPanel2.name = "taxSetPanel2";
+                        taxSetPanel2.position = new Vector3(10, -140);
+                        taxSetPanel2.TaxValuesStorageIndex = 1;
+
+                        UITaxSetPanel taxSetPanel3 = taxesPanel.AddUIComponent<UITaxSetPanel>();
+                        taxSetPanel3.name = "taxSetPanel3";
+                        taxSetPanel3.position = new Vector3(10, -240);
+                        taxSetPanel3.TaxValuesStorageIndex = 2;
+                    }
+                }
+            }
+        }
+
+        private static bool isTaxControlsNotCreated()
+        {
+            UITabContainer economyContainer = ToolsModifierControl.economyPanel.component.Find<UITabContainer>("EconomyContainer");
+            if (economyContainer != null)
+            {
                 UIPanel taxesPanel = economyContainer.Find<UIPanel>("Taxes");
-
-                UITaxSetPanel taxSetPanel1 = taxesPanel.AddUIComponent<UITaxSetPanel>();
-                taxSetPanel1.position = new Vector3(10, -40);
-                taxSetPanel1.TaxValuesStorageIndex = 0;
-
-                UITaxSetPanel taxSetPanel2 = taxesPanel.AddUIComponent<UITaxSetPanel>();
-                taxSetPanel2.position = new Vector3(10, -140);
-                taxSetPanel2.TaxValuesStorageIndex = 1;
-
-                UITaxSetPanel taxSetPanel3 = taxesPanel.AddUIComponent<UITaxSetPanel>();
-                taxSetPanel3.position = new Vector3(10, -240);
-                taxSetPanel3.TaxValuesStorageIndex = 2;
+                if (taxesPanel != null)
+                {
+                    return taxesPanel.Find<UITaxSetPanel>("taxSetPanel1") == null;
+                }
             }
+
+            return true;
         }
 
         #endregion
