@@ -8,7 +8,7 @@ namespace TaxHelperMod
         {
             public void Serialize(DataSerializer s)
             {
-                s.WriteBool(TaxMultiplierManager.TaxMultiplierOff);
+                s.WriteBool(TaxMultiplierManager.IsTaxMultiplierDisabled);
 
                 for (int i = 0; i < taxValues.Length; i++)
                 {
@@ -18,7 +18,7 @@ namespace TaxHelperMod
 
             public void Deserialize(DataSerializer s)
             {
-                TaxMultiplierManager.TaxMultiplierOff = s.ReadBool();
+                TaxMultiplierManager.IsTaxMultiplierDisabled = s.ReadBool();
 
                 for (int i = 0; i < taxValues.Length; i++)
                 {

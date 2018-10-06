@@ -26,11 +26,12 @@ namespace TaxHelperMod
         //Tabstrip(ColossalFramework.UI.UITabstrip)
         //TabContainer(ColossalFramework.UI.UITabContainer)
 
-        public static bool TaxMultiplierOff = false;
+        public static bool IsTaxMultiplierDisabled = false;
         private static int counter = 0;
         private const string taxMultiplierLabelName = "taxMultiplierLabel";
+        private const string disableTaxMultiplierChkboxName = "disableTaxMultiplierChkbox";
 
-        public static void AddTaxMultiplierLabel()
+        public static void AddControls()
         {
             if (findTaxMultiplierLabel() == null)
             {
@@ -42,7 +43,7 @@ namespace TaxHelperMod
                     {
                         UILabel taxMultiplierLabel = taxesPanel.AddUIComponent<UILabel>();
                         taxMultiplierLabel.name = taxMultiplierLabelName;
-                        taxMultiplierLabel.position = new Vector3(10, -taxesPanel.height + 60);
+                        taxMultiplierLabel.position = new Vector3(10, -taxesPanel.height + 85);
 
                         taxesPanel.eventVisibilityChanged += delegate (UIComponent component, bool value)
                         {
@@ -51,6 +52,31 @@ namespace TaxHelperMod
                                 counter = 100;
                                 updateTaxMultiplierLabel();
                             }
+                        };
+
+                        UICheckBox disableTaxMultiplierChkbox = taxesPanel.AddUIComponent<UICheckBox>();
+                        disableTaxMultiplierChkbox.name = disableTaxMultiplierChkboxName;
+                        disableTaxMultiplierChkbox.position = new Vector3(10, -taxesPanel.height + 65);
+                        disableTaxMultiplierChkbox.size = new Vector2(40, 20);
+
+                        UISprite sprite = disableTaxMultiplierChkbox.AddUIComponent<UISprite>();
+                        sprite.spriteName = "ToggleBase";
+                        sprite.size = new Vector2(16f, 16f);
+                        sprite.relativePosition = new Vector3(2f, 2f);
+
+                        disableTaxMultiplierChkbox.checkedBoxObject = sprite.AddUIComponent<UISprite>();
+                        ((UISprite)disableTaxMultiplierChkbox.checkedBoxObject).spriteName = "ToggleBaseFocused";
+                        disableTaxMultiplierChkbox.checkedBoxObject.size = new Vector2(16f, 16f);
+                        disableTaxMultiplierChkbox.checkedBoxObject.relativePosition = Vector3.zero;
+
+                        UILabel label = disableTaxMultiplierChkbox.AddUIComponent<UILabel>();
+                        label.relativePosition = new Vector3(22f, 2f);
+                        label.text = "Off";
+                        disableTaxMultiplierChkbox.label = label;
+
+                        disableTaxMultiplierChkbox.eventCheckChanged += delegate (UIComponent component, bool value)
+                        {
+                            IsTaxMultiplierDisabled = value;
                         };
                     }
                 }
@@ -64,6 +90,21 @@ namespace TaxHelperMod
             return ((int)field.GetValue(em)) * 0.0001f;
         }
 
+        private static void setTaxMultiplier(float value)
+        {
+            EconomyManager em = Singleton<EconomyManager>.instance;
+            FieldInfo field = em.GetType().GetField("m_taxMultiplier", BindingFlags.NonPublic | BindingFlags.Instance);
+            field.SetValue(em, (int)(value * 10000));
+        }
+
+        public static void OnBeforeSimulationFrame()
+        {
+            if (IsTaxMultiplierDisabled)
+            {
+                setTaxMultiplier(1);
+            }
+        }
+        
         public static void OnAfterSimulationFrame()
         {
             if (!ToolsModifierControl.economyPanel.component.isVisible) return;
