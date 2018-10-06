@@ -77,31 +77,43 @@ namespace TaxHelperMod
                         disableTaxMultiplierChkbox.eventCheckChanged += delegate (UIComponent component, bool value)
                         {
                             IsTaxMultiplierDisabled = value;
+
+                            if (value)
+                            {
+                                setTaxMultiplier(10000);
+                            }
+                            else
+                            {
+                                setTaxMultiplier(calculateTaxMultiplier());
+                            }
+
+                            counter = 100;
+                            updateTaxMultiplierLabel();
                         };
                     }
                 }
             }
         }
 
-        private static float getTaxMultiplier()
+        private static int getTaxMultiplier()
         {
             EconomyManager em = Singleton<EconomyManager>.instance;
             FieldInfo field = em.GetType().GetField("m_taxMultiplier", BindingFlags.NonPublic | BindingFlags.Instance);
-            return ((int)field.GetValue(em)) * 0.0001f;
+            return (int)field.GetValue(em);
         }
 
-        private static void setTaxMultiplier(float value)
+        private static void setTaxMultiplier(int value)
         {
             EconomyManager em = Singleton<EconomyManager>.instance;
             FieldInfo field = em.GetType().GetField("m_taxMultiplier", BindingFlags.NonPublic | BindingFlags.Instance);
-            field.SetValue(em, (int)(value * 10000));
+            field.SetValue(em, value);
         }
 
         public static void OnBeforeSimulationFrame()
         {
             if (IsTaxMultiplierDisabled)
             {
-                setTaxMultiplier(1);
+                setTaxMultiplier(10000);
             }
         }
         
@@ -127,7 +139,7 @@ namespace TaxHelperMod
                     UILabel taxMultiplierLabel = taxesPanel.Find<UILabel>(taxMultiplierLabelName);
                     if (taxMultiplierLabel != null)
                     {
-                        taxMultiplierLabel.text = string.Format("Tax multiplier: {0:0.000}", getTaxMultiplier());
+                        taxMultiplierLabel.text = string.Format("Tax multiplier: {0:0.000}", getTaxMultiplier() * 0.0001);
                     }
                 }
             }
@@ -146,6 +158,72 @@ namespace TaxHelperMod
             }
 
             return null;
+        }
+
+        // Copy from EconomyManager.SimulationStepImpl()
+        private static int calculateTaxMultiplier()
+        {
+            EconomyManager em = Singleton<EconomyManager>.instance;
+
+            FieldInfo field;
+            field = em.GetType().GetField("m_lastCashDelta", BindingFlags.NonPublic | BindingFlags.Instance);
+            long m_lastCashDelta = (long)field.GetValue(em);
+
+            field = em.GetType().GetField("m_cashAmount", BindingFlags.NonPublic | BindingFlags.Instance);
+            long m_cashAmount = (long)field.GetValue(em);
+
+            field = em.GetType().GetField("m_totalExpenses", BindingFlags.NonPublic | BindingFlags.Instance);
+            long[] m_totalExpenses = (long[])field.GetValue(em);
+
+            long totalExpenses = 0L;
+            for (int l = 0; l < 16; l++)
+            {
+                totalExpenses += m_totalExpenses[l];
+            }
+            long result;
+            if (totalExpenses != 0L)
+            {
+                long num17 = 200000L;
+                long num18 = (m_lastCashDelta - num17) * 20000L / totalExpenses;
+                if (num18 > 0L)
+                {
+                    result = 5000L + 50000000L / (num18 + 10000L);
+                }
+                else if (num18 < 0L)
+                {
+                    result = 20000L + 200000000L / (num18 - 20000L);
+                }
+                else
+                {
+                    result = 10000L;
+                }
+                long num20 = m_cashAmount;
+                long num21 = (long)Singleton<DistrictManager>.instance.m_districts.m_buffer[0].m_populationData.m_finalCount;
+                if (num20 < 0L)
+                {
+                    num20 = 0L;
+                }
+                if (num21 < 0L)
+                {
+                    num21 = 0L;
+                }
+                result = result * 1000000000L / (1000000000L + num20);
+                result = result * 1000000L / (1000000L + num21);
+                if (result < 100L)
+                {
+                    result = 100L;
+                }
+                else if (result > 30000L)
+                {
+                    result = 30000L;
+                }
+            }
+            else
+            {
+                result = 10000L;
+            }
+
+            return (int)result;
         }
     }
 }
