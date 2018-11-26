@@ -1,4 +1,5 @@
-﻿using ColossalFramework.IO;
+﻿using ColossalFramework;
+using ColossalFramework.IO;
 
 namespace TaxHelperMod
 {
@@ -8,7 +9,7 @@ namespace TaxHelperMod
         {
             public void Serialize(DataSerializer s)
             {
-                s.WriteBool(TaxMultiplierManager.IsTaxMultiplierDisabled);
+                s.WriteBool(Singleton<TaxMultiplierManager>.instance.IsTaxMultiplierDisabled);
 
                 for (int i = 0; i < taxValues.Length; i++)
                 {
@@ -18,7 +19,7 @@ namespace TaxHelperMod
 
             public void Deserialize(DataSerializer s)
             {
-                TaxMultiplierManager.IsTaxMultiplierDisabled = s.ReadBool();
+                Singleton<TaxMultiplierManager>.instance.IsTaxMultiplierDisabled = s.ReadBool();
 
                 for (int i = 0; i < taxValues.Length; i++)
                 {

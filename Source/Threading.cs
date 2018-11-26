@@ -6,12 +6,12 @@ namespace TaxHelperMod
     {
         public override void OnBeforeSimulationFrame()
         {
-            TaxMultiplierManager.OnBeforeSimulationFrame();
+            //TaxMultiplierManager.OnBeforeSimulationFrame();
         }
 
         public override void OnAfterSimulationFrame()
         {
-            TaxMultiplierManager.OnAfterSimulationFrame();
+            //TaxMultiplierManager.OnAfterSimulationFrame();
         }
     }
 }
