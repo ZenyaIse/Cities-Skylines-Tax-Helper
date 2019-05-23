@@ -57,9 +57,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SavedTaxValues.cs" />
     <Compile Include="SerializableDataExtension.cs" />
-    <Compile Include="TaxMultiplierManager.cs" />
     <Compile Include="UITaxSetPanel.cs" />
-    <Compile Include="Threading.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
