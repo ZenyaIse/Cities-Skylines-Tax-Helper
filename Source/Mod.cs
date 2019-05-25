@@ -13,14 +13,5 @@ namespace TaxHelperMod
         {
             get { return "Save and restore tax values."; }
         }
-
-
-        #region Options UI
-        
-        public void OnSettingsUI(UIHelperBase helper)
-        {
-        }
-
-        #endregion
     }
 }
