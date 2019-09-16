@@ -11,7 +11,7 @@ namespace TaxHelperMod
 
         public string Description
         {
-            get { return "Save and restore tax values."; }
+            get { return "Save and restore tax values (ver. 2019/9/16)"; }
         }
     }
 }

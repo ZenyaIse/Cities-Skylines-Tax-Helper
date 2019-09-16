@@ -1,4 +1,5 @@
-﻿using ICities;
+﻿using ColossalFramework;
+using ICities;
 
 namespace TaxHelperMod
 {
@@ -9,6 +10,7 @@ namespace TaxHelperMod
             if (mode == LoadMode.NewGame || mode == LoadMode.LoadGame || mode == LoadMode.NewGameFromScenario)
             {
                 UITaxSetPanel.AddTaxControls();
+                Singleton<TaxMultiplierManager>.instance.Init();
             }
         }
     }
