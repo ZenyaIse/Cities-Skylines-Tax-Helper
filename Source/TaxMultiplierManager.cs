@@ -10,41 +10,44 @@ namespace TaxHelperMod
         private bool _isTaxMultiplierOverrideEnabled = false;
         public int TaxMultiplierUserValue = 10000;
 
-        //private bool isInitialized = false;
-        //private TaxMultiplierPanel taxMultiplierPanel = null;
-
-        public void Init()
+        public void RefreshTaxMultiplierPanelState()
         {
-            if (isTaxControlsNotCreated())
+            UITabContainer economyContainer = ToolsModifierControl.economyPanel.component.Find<UITabContainer>("EconomyContainer");
+            UIPanel taxesPanel = null;
+            TaxMultiplierPanel taxMultiplierPanel = null;
+
+            if (economyContainer != null)
             {
-                UITabContainer economyContainer = ToolsModifierControl.economyPanel.component.Find<UITabContainer>("EconomyContainer");
-                if (economyContainer != null)
+                taxesPanel = economyContainer.Find<UIPanel>("Taxes");
+                if (taxesPanel != null)
                 {
-                    UIPanel taxesPanel = economyContainer.Find<UIPanel>("Taxes");
+                    taxMultiplierPanel = taxesPanel.Find<TaxMultiplierPanel>("TaxMultiplierPanel");
+                }
+            }
+
+            if (taxMultiplierPanel == null)
+            {
+                if (ModOptions.Instance.IsShowTaxMultiplierPanel)
+                {
                     if (taxesPanel != null)
                     {
-                        //GameObject obj = new GameObject("TaxMultiplierPanel");
-                        //obj.transform.parent = UIView.GetAView().cachedTransform;
-                        TaxMultiplierPanel taxMultiplierPanel = taxesPanel.AddUIComponent<TaxMultiplierPanel>();
+                        taxMultiplierPanel = taxesPanel.AddUIComponent<TaxMultiplierPanel>();
                         taxMultiplierPanel.name = "TaxMultiplierPanel";
                         taxMultiplierPanel.position = new Vector3(10, -475);
                     }
                 }
             }
-
-            //if (isInitialized) return;
-
-            //UITabContainer economyContainer = ToolsModifierControl.economyPanel.component.Find<UITabContainer>("EconomyContainer");
-            //if (economyContainer != null)
-            //{
-            //    UIPanel taxesPanel = economyContainer.Find<UIPanel>("Taxes");
-
-            //    if (taxesPanel != null)
-            //    {
-            //        taxesPanel.eventVisibilityChanged += BudgetPanel_eventVisibilityChanged;
-            //        isInitialized = true;
-            //    }
-            //}
+            else
+            {
+                if (!ModOptions.Instance.IsShowTaxMultiplierPanel)
+                {
+                    if (taxesPanel != null)
+                    {
+                        taxesPanel.RemoveUIComponent(taxMultiplierPanel);
+                        taxMultiplierPanel = null;
+                    }
+                }
+            }
         }
 
         public bool IsTaxMultiplierOverrideEnabled
@@ -79,25 +82,6 @@ namespace TaxHelperMod
 
             return true;
         }
-
-        //private void BudgetPanel_eventVisibilityChanged(UIComponent component, bool value)
-        //{
-        //    if (taxMultiplierPanel == null)
-        //    {
-        //        GameObject obj = new GameObject("TaxMultiplierPanel");
-        //        obj.transform.parent = UIView.GetAView().cachedTransform;
-        //        taxMultiplierPanel = obj.AddComponent<TaxMultiplierPanel>();
-        //        taxMultiplierPanel.name = "TaxMultiplierPanel";
-        //    }
-
-        //    if (value && taxMultiplierPanel.absolutePosition == Vector3.zero)
-        //    {
-        //        Vector3 economyPanelPos = ToolsModifierControl.economyPanel.component.absolutePosition;
-        //        taxMultiplierPanel.absolutePosition = new Vector3(economyPanelPos.x + 27, economyPanelPos.y + 598);
-        //    }
-
-        //    taxMultiplierPanel.isVisible = value;
-        //}
 
         public int GetTaxMultiplier()
         {

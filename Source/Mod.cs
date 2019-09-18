@@ -11,7 +11,20 @@ namespace TaxHelperMod
 
         public string Description
         {
-            get { return "Save and restore tax values (ver. 2019/9/16)"; }
+            get { return "Save and restore tax values (ver. 2019/9/17)"; }
         }
+
+        #region Options UI
+
+        public void OnSettingsUI(UIHelperBase helper)
+        {
+            helper.AddCheckbox("Show Tax Multiplier controls (advanced)", ModOptions.Instance.IsShowTaxMultiplierPanel, delegate (bool isChecked)
+            {
+                ModOptions.Instance.IsShowTaxMultiplierPanel = isChecked;
+                TaxMultiplierManager.instance.RefreshTaxMultiplierPanelState();
+            });
+        }
+
+        #endregion
     }
 }

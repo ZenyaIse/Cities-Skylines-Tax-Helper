@@ -10,7 +10,7 @@ namespace TaxHelperMod
             if (mode == LoadMode.NewGame || mode == LoadMode.LoadGame || mode == LoadMode.NewGameFromScenario)
             {
                 UITaxSetPanel.AddTaxControls();
-                Singleton<TaxMultiplierManager>.instance.Init();
+                Singleton<TaxMultiplierManager>.instance.RefreshTaxMultiplierPanelState();
             }
         }
     }
