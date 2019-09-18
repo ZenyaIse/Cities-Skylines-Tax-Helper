@@ -14,8 +14,8 @@ namespace TaxHelperMod
         {
             base.Awake();
 
-            //this.backgroundSprite = "GenericPanel";
-            this.backgroundSprite = "MenuPanel";
+            this.backgroundSprite = "GenericPanel";
+            //this.backgroundSprite = "MenuPanel";
             //this.backgroundSprite = "ProgressBarFill";
             //this.color = new Color32(255, 0, 0, 100);
             this.canFocus = true;
