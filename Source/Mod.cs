@@ -11,7 +11,7 @@ namespace TaxHelperMod
 
         public string Description
         {
-            get { return "Save and restore tax values (ver. 2019/9/17)"; }
+            get { return "Save and restore tax values (ver. 2022/7/30)"; }
         }
 
         #region Options UI
@@ -22,6 +22,7 @@ namespace TaxHelperMod
             {
                 ModOptions.Instance.IsShowTaxMultiplierPanel = isChecked;
                 TaxMultiplierManager.instance.RefreshTaxMultiplierPanelState();
+                ModOptions.Instance.Save();
             });
         }
 
